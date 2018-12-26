@@ -1,0 +1,242 @@
+version: '2'
+
+networks:
+  test_net:
+
+services:
+
+  rca-mysql-ordererorg:
+    extends:
+      file: base.yml
+      service: mysql-base
+    container_name: rca-mysql-ordererorg
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: fabric_ca
+      MYSQL_USER: fabric
+      MYSQL_PASSWORD: 123456
+    ports:
+      - "3306:3306"
+
+  rca-ordererorg.example.com:
+    extends:
+      file: base.yml
+      service: ca-base
+    container_name: rca-ordererorg.example.com
+    command: /bin/bash -c '/scripts/docker_start_rca.sh 2>&1 | tee /data/logs/rca-ordererorg.example.com.log'
+    environment:
+      - FABRIC_CA_SERVER_CSR_CN=rca-ordererorg.example.com
+      - FABRIC_CA_SERVER_CSR_HOSTS=rca-ordererorg.example.com
+      - FABRIC_CA_SERVER_DEBUG=true
+      - BOOTSTRAP_USER_PASS=rca-ordererorg-admin:adminpw
+      - FABRIC_ORGS=ordererorg
+      - MYSQL_USER_PASS=fabric:123456
+      - MYSQL_HOST=rca-mysql-ordererorg
+      - TARGET_CERTFILE=/data/ordererorg-ca-cert.pem
+    volumes:
+      - ./scripts:/scripts
+      - ./data:/data
+      - ./data/logs:/data/logs
+    depends_on:
+      - rca-mysql-ordererorg
+
+  ica-mysql-ordererorg:
+    extends:
+      file: base.yml
+      service: mysql-base
+    container_name: ica-mysql-ordererorg
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: fabric_ca
+      MYSQL_USER: fabric
+      MYSQL_PASSWORD: 123456
+    ports:
+      - "3307:3306"
+
+  ica-ordererorg.example.com:
+    extends:
+      file: base.yml
+      service: ca-base
+    container_name: ica-ordererorg.example.com
+    command: /bin/bash -c '/scripts/docker_start_ica.sh 2>&1 | tee /data/logs/ica-ordererorg.example.com.log'
+    environment:
+      - FABRIC_CA_SERVER_CA_NAME=ica-ordererorg.example.com
+      - FABRIC_CA_SERVER_INTERMEDIATE_TLS_CERTFILES=/data/ordererorg-ca-cert.pem
+      - FABRIC_CA_SERVER_CSR_HOSTS=ica-ordererorg.example.com
+      - FABRIC_CA_SERVER_DEBUG=true
+      - FABRIC_CA_CLIENT_HOME=/etc/hyperledger/fabric-ca-client
+      - BOOTSTRAP_USER_PASS=ica-ordererorg-admin:adminpw
+      - PARENT_URL=https://rca-ordererorg-admin:adminpw@rca-ordererorg.example.com:7054
+      - ORG=ordererorg
+      - FABRIC_ORGS=ordererorg
+      - MYSQL_USER_PASS=fabric:123456
+      - MYSQL_HOST=ica-mysql-ordererorg
+      - TARGET_CHAINFILE=/data/ordererorg-ca-chain.pem
+    volumes:
+      - ./scripts:/scripts
+      - ./data:/data
+      - ./data/logs:/data/logs
+    depends_on:
+      - rca-ordererorg.example.com
+      - ica-mysql-ordererorg
+
+  rca-mysql-org1:
+    extends:
+      file: base.yml
+      service: mysql-base
+    container_name: rca-mysql-org1
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: fabric_ca
+      MYSQL_USER: fabric
+      MYSQL_PASSWORD: 123456
+#    ports:
+#      - "3306:3306"
+
+  rca-org1.example.com:
+    extends:
+      file: base.yml
+      service: ca-base
+    container_name: rca-org1.example.com
+    command: /bin/bash -c '/scripts/docker_start_rca.sh 2>&1 | tee /data/logs/rca-org1.example.com.log'
+    environment:
+      - FABRIC_CA_SERVER_CSR_CN=rca-org1.example.com
+      - FABRIC_CA_SERVER_CSR_HOSTS=rca-org1.example.com
+      - FABRIC_CA_SERVER_DEBUG=true
+      - BOOTSTRAP_USER_PASS=rca-org1-admin:adminpw
+      - FABRIC_ORGS=org1
+      - MYSQL_USER_PASS=fabric:123456
+      - MYSQL_HOST=rca-mysql-org1
+      - TARGET_CERTFILE=/data/org1-ca-cert.pem
+    volumes:
+      - ./scripts:/scripts
+      - ./data:/data
+      - ./data/logs:/data/logs
+    depends_on:
+      - rca-mysql-org1
+
+  ica-mysql-org1:
+    extends:
+      file: base.yml
+      service: mysql-base
+    container_name: ica-mysql-org1
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: fabric_ca
+      MYSQL_USER: fabric
+      MYSQL_PASSWORD: 123456
+#    ports:
+#      - "3307:3306"
+
+  ica-org1.example.com:
+    extends:
+      file: base.yml
+      service: ca-base
+    container_name: ica-org1.example.com
+    command: /bin/bash -c '/scripts/docker_start_ica.sh 2>&1 | tee /data/logs/ica-org1.example.com.log'
+    environment:
+      - FABRIC_CA_SERVER_CA_NAME=ica-org1.example.com
+      - FABRIC_CA_SERVER_INTERMEDIATE_TLS_CERTFILES=/data/org1-ca-cert.pem
+      - FABRIC_CA_SERVER_CSR_HOSTS=ica-org1.example.com
+      - FABRIC_CA_SERVER_DEBUG=true
+      - FABRIC_CA_CLIENT_HOME=/etc/hyperledger/fabric-ca-client
+      - BOOTSTRAP_USER_PASS=ica-org1-admin:adminpw
+      - PARENT_URL=https://rca-org1-admin:adminpw@rca-org1.example.com:7054
+      - ORG=org1
+      - FABRIC_ORGS=org1
+      - MYSQL_USER_PASS=fabric:123456
+      - MYSQL_HOST=ica-mysql-org1
+      - TARGET_CHAINFILE=/data/org1-ca-chain.pem
+    volumes:
+      - ./scripts:/scripts
+      - ./data:/data
+      - ./data/logs:/data/logs
+    depends_on:
+      - rca-org1.example.com
+      - ica-mysql-org1
+
+  rca-mysql-org2:
+    extends:
+      file: base.yml
+      service: mysql-base
+    container_name: rca-mysql-org2
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: fabric_ca
+      MYSQL_USER: fabric
+      MYSQL_PASSWORD: 123456
+#    ports:
+#      - "3306:3306"
+
+  rca-org2.example.com:
+    extends:
+      file: base.yml
+      service: ca-base
+    container_name: rca-org2.example.com
+    command: /bin/bash -c '/scripts/docker_start_rca.sh 2>&1 | tee /data/logs/rca-org2.example.com.log'
+    environment:
+      - FABRIC_CA_SERVER_CSR_CN=rca-org2.example.com
+      - FABRIC_CA_SERVER_CSR_HOSTS=rca-org2.example.com
+      - FABRIC_CA_SERVER_DEBUG=true
+      - BOOTSTRAP_USER_PASS=rca-org2-admin:adminpw
+      - FABRIC_ORGS=org2
+      - MYSQL_USER_PASS=fabric:123456
+      - MYSQL_HOST=rca-mysql-org2
+      - TARGET_CERTFILE=/data/org2-ca-cert.pem
+    volumes:
+      - ./scripts:/scripts
+      - ./data:/data
+      - ./data/logs:/data/logs
+    depends_on:
+      - rca-mysql-org2
+
+  ica-mysql-org2:
+    extends:
+      file: base.yml
+      service: mysql-base
+    container_name: ica-mysql-org2
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: fabric_ca
+      MYSQL_USER: fabric
+      MYSQL_PASSWORD: 123456
+#    ports:
+#      - "3307:3306"
+
+  ica-org2.example.com:
+    extends:
+      file: base.yml
+      service: ca-base
+    container_name: ica-org2.example.com
+    command: /bin/bash -c '/scripts/docker_start_ica.sh 2>&1 | tee /data/logs/ica-org2.example.com.log'
+    environment:
+      - FABRIC_CA_SERVER_CA_NAME=ica-org2.example.com
+      - FABRIC_CA_SERVER_INTERMEDIATE_TLS_CERTFILES=/data/org2-ca-cert.pem
+      - FABRIC_CA_SERVER_CSR_HOSTS=ica-org2.example.com
+      - FABRIC_CA_SERVER_DEBUG=true
+      - FABRIC_CA_CLIENT_HOME=/etc/hyperledger/fabric-ca-client
+      - BOOTSTRAP_USER_PASS=ica-org2-admin:adminpw
+      - PARENT_URL=https://rca-org2-admin:adminpw@rca-org2.example.com:7054
+      - ORG=org2
+      - FABRIC_ORGS=org2
+      - MYSQL_USER_PASS=fabric:123456
+      - MYSQL_HOST=ica-mysql-org2
+      - TARGET_CHAINFILE=/data/org2-ca-chain.pem
+    volumes:
+      - ./scripts:/scripts
+      - ./data:/data
+      - ./data/logs:/data/logs
+    depends_on:
+      - rca-org2.example.com
+      - ica-mysql-org2
+
+  fabric-cli:
+    extends:
+      file: base.yml
+      service: ca-base
+    container_name: fabric-cli
+    volumes:
+      - ./scripts:/scripts
+      - ./data:/data
+      - /home/yunbo/fabric-samples:/opt/gopath/src/github.com/hyperledger/fabric-samples
+

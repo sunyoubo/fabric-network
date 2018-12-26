@@ -1,0 +1,109 @@
+version: '2' # compose v3 still doesn't support `extends`, shame!
+
+services:
+
+  mysql-base:
+    image: mysql:$MYSQL_TAG
+    restart: always
+    command: --sql-mode ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+    networks:
+      - $NET_GROUP
+
+  ca-base:
+    image: hyperledger/fabric-ca:$FABRIC_TAG
+    restart: always
+    environment:
+      - FABRIC_CA_SERVER_HOME=/etc/hyperledger/fabric-ca
+      - FABRIC_CA_SERVER_TLS_ENABLED=true
+    networks:
+      - $NET_GROUP
+
+  orderer-base:
+    build:
+      context: .
+      dockerfile: fabric-ca-orderer.dockerfile
+    restart: always
+    environment:
+      - FABRIC_CA_CLIENT_HOME=/etc/hyperledger/orderer
+      - ORDERER_HOME=/etc/hyperledger/orderer
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_LOCALMSPDIR=/etc/hyperledger/orderer/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/etc/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/etc/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_CLIENTAUTHREQUIRED=true
+
+  peer-base: # abstract base for fabric-peer, will be used in peer.yaml
+    build:
+      context: .
+      dockerfile: fabric-ca-peer.dockerfile
+    restart: always
+    environment:
+      - FABRIC_CA_CLIENT_HOME=/opt/gopath/src/github.com/hyperledger/fabric/peer
+      - PEER_HOME=/opt/gopath/src/github.com/hyperledger/fabric/peer
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - CORE_PEER_ADDRESSAUTODETECT=false
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=${COMPOSE_PROJECT_NAME}_$NET_GROUP
+      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=true
+      - CORE_PEER_GOSSIP_USELEADERELECTION=true
+      #- CORE_PEER_PROFILE_ENABLED=true
+      - CORE_PEER_TLS_ENABLED=true
+      - CORE_PEER_TLS_CERT_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/tls/server.crt
+      - CORE_PEER_TLS_KEY_FILE=/opt/gopath/src/github.com/hyperledger/fabric/peer/tls/server.key
+      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/msp
+      - CORE_CHIANCODE_LOGGING_LEVEL=DEBUG
+      - CORE_CHIANCODE_LOGGING_FORMAT=%{color}[%{id:03x} %{time:01-02 15:04:05.00 MST}] [%{longpkg}] %{callpath} -> %{level:.4s}%{color:reset} %{message}
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
+    volumes:
+      - ./scripts:/scripts
+      - ./data:/data
+      - /var/run:/host/var/run
+    networks:
+      - $NET_GROUP
+
+  zookeeper-base:
+    image: hyperledger/fabric-zookeeper:$KAFKA_TAG
+    restart: always
+    tty: true
+    expose:
+      - '2181'
+      - '2888'
+      - '3888'
+    networks:
+      - $NET_GROUP
+
+  kafka-base:
+    image: hyperledger/fabric-kafka:$KAFKA_TAG
+    restart: always
+    tty: true
+    environment:
+      - KAFKA_MESSAGE_MAX_BYTES=1048576 # 1 * 1024 * 1024 B
+      - KAFKA_REPLICA_FETCH_MAX_BYTES=1048576 # 1 * 1024 * 1024 B
+      - KAFKA_UNCLEAN_LEADER_ELECTION_ENABLE=false
+      - KAFKA_LOG_RETENTION_MS=-1
+    expose:
+      - '9092'
+    networks:
+      - $NET_GROUP
+
+  couchdb-base:
+    image: hyperledger/fabric-couchdb:$COUCHDB_TAG
+    restart: always
+    tty: true
+    networks:
+      - $NET_GROUP
+
+  cli-base:
+    tty: true
+    build:
+      context: .
+      dockerfile: fabric-ca-tools.dockerfile
+    command: /bin/bash
+    environment:
+      - FABRIC_CFG_PATH=/etc/hyperledger/fabric/
+      - CORE_LOGGING_LEVEL=DEBUG
+    networks:
+      - $NET_GROUP

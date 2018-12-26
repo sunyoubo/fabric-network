@@ -1,0 +1,138 @@
+version: '2'
+
+networks:
+  test_net:
+
+services:
+
+  order1-ordererorg.example.com:
+    extends:
+      file: base.yml
+      service: orderer-base
+    container_name: order1-ordererorg.example.com
+    environment:
+      - FABRIC_CA_CLIENT_TLS_CERTFILES=/data/ordererorg-ca-chain.pem
+      - ORDERER_HOST=order1-ordererorg.example.com
+      - ORDERER_GENERAL_GENESISFILE=/data/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=ordererorgMSP
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/data/ordererorg-ca-chain.pem]
+      - ORDERER_GENERAL_TLS_CLIENTROOTCAS=[/data/ordererorg-ca-chain.pem]
+      - ORDERER_GENERAL_LOGLEVEL=debug
+      - ORDERER_DEBUG_BROADCASTTRACEDIR=data/logs
+      - ORG=ordererorg
+      - ORG_ADMIN_CERT=/data/orgs/ordererorg/msp/admincerts/cert.pem
+      - CA_ADMIN_USER_PASS=ica-ordererorg-admin:adminpw
+      - CA_ADDRESS=ica-ordererorg.example.com:7054
+      - CA_NAME=ica-ordererorg.example.com
+      - ORDERER_NAME=order1-ordererorg.example.com
+      - ORDERER_PASS=123456
+    command: /bin/bash -c '/scripts/docker_start_orderer.sh 2>&1 | tee /data/logs/order1-ordererorg.example.com.log'
+    volumes:
+      - ./scripts:/scripts
+      - ./data:/data
+    ports:
+      - 7050:7050
+    depends_on:
+      - kafka0
+      - kafka1
+      - kafka2
+      - kafka3
+    networks:
+      - $NET_GROUP
+#    extra_hosts:
+#     - "somehost:162.242.195.82"
+
+  zookeeper0:
+    extends:
+      file: base.yml
+      service: zookeeper-base
+    container_name: zookeeper0
+    hostname: zookeeper0
+    environment:
+      - ZOO_MY_ID=1
+      - ZOO_SERVERS=server.1=zookeeper0:2888:3888 server.2=zookeeper1:2888:3888 server.3=zookeeper2:2888:3888
+
+  zookeeper1:
+    extends:
+      file: base.yml
+      service: zookeeper-base
+    container_name: zookeeper1
+    hostname: zookeeper1
+    environment:
+      - ZOO_MY_ID=2
+      - ZOO_SERVERS=server.1=zookeeper0:2888:3888 server.2=zookeeper1:2888:3888 server.3=zookeeper2:2888:3888
+
+  zookeeper2:
+    extends:
+      file: base.yml
+      service: zookeeper-base
+    container_name: zookeeper2
+    hostname: zookeeper2
+    environment:
+      - ZOO_MY_ID=3
+      - ZOO_SERVERS=server.1=zookeeper0:2888:3888 server.2=zookeeper1:2888:3888 server.3=zookeeper2:2888:3888
+
+  # Kafka services, at least 4 node to tolerant work with 1 node failure
+  kafka0:
+    extends:
+      file: base.yml
+      service: kafka-base
+    container_name: kafka0
+    hostname: kafka0
+    environment:
+      - KAFKA_BROKER_ID=0
+      - KAFKA_MIN_INSYNC_REPLICAS=2
+      - KAFKA_DEFAULT_REPLICATION_FACTOR=3
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper0:2181,zookeeper1:2181,zookeeper2:2181
+    depends_on:
+      - zookeeper0
+      - zookeeper1
+      - zookeeper2
+
+  kafka1:
+    extends:
+      file: base.yml
+      service: kafka-base
+    container_name: kafka1
+    hostname: kafka1
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_DEFAULT_REPLICATION_FACTOR=3
+      - KAFKA_MIN_INSYNC_REPLICAS=2
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper0:2181,zookeeper1:2181,zookeeper2:2181
+    depends_on:
+      - zookeeper0
+      - zookeeper1
+      - zookeeper2
+
+  kafka2:
+    extends:
+      file: base.yml
+      service: kafka-base
+    container_name: kafka2
+    hostname: kafka2
+    environment:
+      - KAFKA_BROKER_ID=2
+      - KAFKA_DEFAULT_REPLICATION_FACTOR=3
+      - KAFKA_MIN_INSYNC_REPLICAS=2
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper0:2181,zookeeper1:2181,zookeeper2:2181
+    depends_on:
+      - zookeeper0
+      - zookeeper1
+      - zookeeper2
+
+  kafka3:
+    extends:
+      file: base.yml
+      service: kafka-base
+    container_name: kafka3
+    hostname: kafka3
+    environment:
+      - KAFKA_BROKER_ID=3
+      - KAFKA_DEFAULT_REPLICATION_FACTOR=3
+      - KAFKA_MIN_INSYNC_REPLICAS=2
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper0:2181,zookeeper1:2181,zookeeper2:2181
+    depends_on:
+      - zookeeper0
+      - zookeeper1
+      - zookeeper2
