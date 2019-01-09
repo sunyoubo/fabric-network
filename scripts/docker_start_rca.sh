@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-
+sleep 20
 
 fabric-ca-server init -b ${BOOTSTRAP_USER_PASS} --db.type mysql --db.datasource "${MYSQL_USER_PASS}@tcp(${MYSQL_HOST}:3306)/fabric_ca?parseTime=true"
 #产生如下文件：

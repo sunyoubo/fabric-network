@@ -1,0 +1,89 @@
+{
+  "network-configs": {
+    "network-1": {
+      "version": "1.0",
+      "clients": {
+        "client-1": {
+          "tlsEnable": true,
+          "organization": "Org1MSP",
+          "channel": "mychannel",
+          "credentialStore": {
+            "path": "./tmp/credentialStore_Org1/credential",
+            "cryptoStore": {
+              "path": "./tmp/credentialStore_Org1/crypto"
+            }
+          }
+        }
+      },
+      "channels": {
+        "mychannel": {
+          "peers": {
+            "peer0.org1.example.com": {}
+          },
+          "connection": {
+            "timeout": {
+              "peer": {
+                "endorser": "6000",
+                "eventHub": "6000",
+                "eventReg": "6000"
+              }
+            }
+          }
+        }
+      },
+      "organizations": {
+        "Org1MSP": {
+          "mspid": "Org1MSP",
+          "fullpath": false,
+          "adminPrivateKey": {
+            "path": "/tmp/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore"
+          },
+          "signedCert": {
+            "path": "/tmp/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts"
+          }
+        },
+        "Org2MSP": {
+          "mspid": "Org2MSP",
+          "adminPrivateKey": {
+            "path": "/tmp/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/keystore"
+          }
+        },
+        "OrdererMSP": {
+          "mspid": "OrdererMSP",
+          "adminPrivateKey": {
+            "path": "/tmp/crypto/ordererOrganizations/example.com/users/Admin@example.com/msp/keystore"
+          }
+        }
+      },
+      "peers": {
+        "peer0.org1.example.com": {
+          "tlsCACerts": {
+            "path": "/tmp/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt"
+          },
+          "url": "grpcs://peer0.org1.example.com:7051",
+          "eventUrl": "grpcs://peer0.org1.example.com:7053",
+          "grpcOptions": {
+            "ssl-target-name-override": "peer0.org1.example.com"
+          }
+        },
+        "peer1.org1.example.com": {
+          "url": "grpcs://peer1.org1.example.com:8051"
+        },
+        "peer0.org2.example.com": {
+          "url": "grpcs://peer0.org2.example.com:7051"
+        },
+        "peer1.org2.example.com": {
+          "url": "grpcs://peer1.org2.example.com:8051"
+        }
+      },
+      "orderers": {
+        "orderer.example.com": {
+          "url": "grpcs://orderer.example.com:7050"
+        }
+      }
+    },
+    "network-2": {}
+  },
+  "configtxgenToolPath": "",
+  "license": "Apache-2.0"
+}

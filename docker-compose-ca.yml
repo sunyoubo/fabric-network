@@ -233,10 +233,13 @@ services:
   fabric-cli:
     extends:
       file: base.yml
-      service: ca-base
+      service: cli-base
     container_name: fabric-cli
     volumes:
       - ./scripts:/scripts
       - ./data:/data
-      - /home/yunbo/fabric-samples:/opt/gopath/src/github.com/hyperledger/fabric-samples
-
+      - ~/fabric-samples:/opt/gopath/src/github.com/hyperledger/fabric-samples
+    extra_hosts:
+     - "order1-ordererorg.example.com:192.168.1.131"
+     - "peer0.org1.example.com:192.168.1.38"
+     - "peer0.org2.example.com:192.168.1.42"

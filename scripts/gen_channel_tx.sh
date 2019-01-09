@@ -33,6 +33,7 @@ function getOrgAnchorsTX () {
 }
 
 cd /data
+export FABRIC_CFG_PATH=/data
 
 createChannelTx ${ENV_CHANNEL_TX_FILE} ${ENV_CHANNEL_NAME}
 

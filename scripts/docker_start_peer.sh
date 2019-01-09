@@ -67,7 +67,7 @@ fillTLSForMSP ${CORE_PEER_MSPCONFIGPATH}
 fillAdminCertForMSP ${CORE_PEER_MSPCONFIGPATH}
 
 # Start the peer
-log "Starting peer ${PEER_NAME} with MSP at ${CORE_PEER_MSPCONFIGPATH} \n"
+log "Starting peer ${PEER_NAME} with MSP at ${CORE_PEER_MSPCONFIGPATH} "
 env | grep CORE
 peer node start
 

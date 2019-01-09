@@ -16,58 +16,67 @@
 
 组织启动CA（注意修改脚本变量配置和docker-compose-ca.yml配置）：
 ```
-./start_ca.sh ordererorg example.com
+sudo ./start_ca.sh ordererorg example.com
 ```
 或
 ```
-./start_ca.sh org1 example.com
+sudo ./start_ca.sh org1 example.com
 ```
 或
 ```
-./start_ca.sh org2 example.com
+sudo ./start_ca.sh org2 example.com
 ```
 
-开放data目录权限：
+根据组织配置，生成组织MSP（注意根据组织修改脚本变量配置）:
 ```
-sudo chmod -R 777 ./data 
+sudo ./get_org_msp.sh ordererorg
+```
+或
+```
+sudo ./get_org_msp.sh org1
+```
+或
+```
+sudo ./get_org_msp.sh org2
 ```
 
-根据组织配置，生成组织MSP（注意修改脚本变量配置）:
-```
-./get_org_msp.sh
-```
-各组织生成组织MSP后，均发送到orderer节点，orderer根据./data/configtx.yaml中的配置存放各组织MSP,并根据该文件配置生成genesis.block。
+各组织生成组织MSP后，均发送到orderer节点(注意不要发送私钥等信息)，orderer根据./data/configtx.yaml中的配置存放各组织MSP,并根据该文件配置生成genesis.block。
 
 1.orderer节点启动(收集各组织MSP并生成genesis.block，启动orderer)
 ```
-./start_orderer.sh
+sudo ./start_orderer.sh
 ```
 
 2.peer节点启动
 ```
-./start_peer.sh org1 example.com
+sudo ./start_peer.sh org1 example.com
 ```
 或
 ```
-./start_peer.sh org2 example.com
+sudo ./start_peer.sh org2 example.com
 ```
 ### 创建通道
 orderer节点（拥有所有组织的msp和configtx.yaml）生成系统通道配置区块（genesis.block）并创建应用通道配置文件（channel.tx），
 同时需要为每个组织的peer创建锚节点更新配置文件（anchors.tx）。所有的peer节点join channel,使用组织管理员更新对应组织的锚节点配置。
 orderer 共享channel.tx文件到channel业务发起peer组织，并由该peer组织创建应用通道，各peer组织创建或获取应用通道区块（channel_name.block）
 用来join到该应用通道中。同时orderer共享各组织对应的锚节点更新配置文件到对应的peer组织，以便对应的peer组织中的锚节点可以更新锚节点通道配置。
+创建操作channel需要和orderer通信，因此peer节点组织需要orderer 的ca-chain.pem证书，默认存储到./data目录下。
 
 - orderer节点创建通道材料（注意修改脚本变量配置）
 
 ```
-./prepare_channel.sh
+sudo ./prepare_channel.sh mychannel org1,org2
 ```
 
-- 业务发起组织创建应用通道或其他组织更新锚节点配置（注意修改脚本变量配置）
+- 业务发起组织(peer节点)创建应用通道或其他组织更新锚节点配置（注意修改脚本变量配置）
 
 各组织管理员操作
 ```
-./do_new_channel.sh
+sudo ./do_new_channel.sh org1 create
+```
+或
+```
+sudo ./do_new_channel.sh org2 update
 ```
 
 ### 部署合约
@@ -76,8 +85,14 @@ orderer 共享channel.tx文件到channel业务发起peer组织，并由该peer�
 
 各组织管理员操作(注意各组织修改对应参数)
 ``` 
-./deploy_cc.sh
+sudo ./deploy_cc.sh org1
+```
+或
+``` 
+sudo ./deploy_cc.sh org2
 ```
 
-
+**todo** 
+ - 映射生产数据到宿主机器（MySQL、账本、各节点证书等）
+ 
 

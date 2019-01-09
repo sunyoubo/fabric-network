@@ -99,7 +99,7 @@ function instantiateChainCode() {
     -P "${CHAIN_CODE_POLICY}" -o ${ORDERER_ADDRESS}  --tls --cafile ${ORDER_CA_CHAINFILE} --clientauth \
     --keyfile ${CORE_PEER_TLS_CLIENTKEY_FILE} --certfile ${CORE_PEER_TLS_CLIENTCERT_FILE}
 
-    verifyExecuteResult $? "Failed to instantiate chain code for channel CHANNEL_NAME:${CHANNEL_NAME}"
+#    verifyExecuteResult $? "Failed to instantiate chain code for channel CHANNEL_NAME:${CHANNEL_NAME}"
 }
 
 listInstalledChaincode() {
@@ -117,6 +117,8 @@ listInstalledChaincode() {
 
     peer chaincode list --installed -C ${CHANNEL_NAME} --tls --cafile ${ORDER_CA_CHAINFILE} --clientauth \
     --keyfile ${CORE_PEER_TLS_CLIENTKEY_FILE} --certfile ${CORE_PEER_TLS_CLIENTCERT_FILE}
+
+    log "----------------------------------------------------------------------------"
 
     verifyExecuteResult $? "Failed to list install chain code from CHANNEL_NAME:${CHANNEL_NAME}"
 }
@@ -137,6 +139,8 @@ listInstantiateChaincode() {
     peer chaincode list --instantiated -C ${CHANNEL_NAME} --tls --cafile ${ORDER_CA_CHAINFILE} --clientauth \
     --keyfile ${CORE_PEER_TLS_CLIENTKEY_FILE} --certfile ${CORE_PEER_TLS_CLIENTCERT_FILE}
 
+    log "----------------------------------------------------------------------------"
+
     verifyExecuteResult $? "Failed to list instantiated chain code from CHANNEL_NAME:${CHANNEL_NAME}"
 }
 
@@ -144,7 +148,7 @@ getOrgAdminMSP ${ENV_ADMIN_MSP_DIR} ${ENV_ORDER_CA_CHAINFILE} ${ENV_ADMIN_ENROLL
 
 PEER_ADDRESS_LIST=(${ENV_PEER_ADDRESS_LIST//,/ })
 for peer in ${PEER_ADDRESS_LIST[@]}; do
-    setPeerEnv ${PEER_LOCALMSPID} ${peer} ${ENV_PEER_CA_CHAINFILE}  ${ENV_CORE_PEER_TLS_CLIENTCERT_FILE} ${ENV_CORE_PEER_TLS_CLIENTKEY_FILE}
+    setPeerEnv ${ENV_CORE_PEER_LOCALMSPID} ${peer} ${ENV_PEER_CA_CHAINFILE}  ${ENV_CORE_PEER_TLS_CLIENTCERT_FILE} ${ENV_CORE_PEER_TLS_CLIENTKEY_FILE}
 
     installChainCode ${ENV_CHAIN_CODE_NAME} ${ENV_CHAIN_CODE_VERSION} ${ENV_CHAIN_CODE_PATH} ${ENV_ORDER_CA_CHAINFILE} \
     ${ENV_CORE_PEER_TLS_CLIENTKEY_FILE} ${ENV_CORE_PEER_TLS_CLIENTCERT_FILE}
@@ -152,9 +156,9 @@ done
 
 if [[ "${ENV_MODE}" == "install" ]]; then
     instantiateChainCode ${ENV_CHANNEL_NAME} ${ENV_CHAIN_CODE_NAME} ${ENV_CHAIN_CODE_VERSION} ${ENV_INIT_ARGS} \
-    ${ENV_CHAIN_CODE_POLICY} ${ENV_ORDERER_ADDRESS} ${ENV_ORDER_CA_CHAINFILE} ${ENV_CORE_PEER_TLS_CLIENTKEY_FILE} \
+    "${ENV_CHAIN_CODE_POLICY}" ${ENV_ORDERER_ADDRESS} ${ENV_ORDER_CA_CHAINFILE} ${ENV_CORE_PEER_TLS_CLIENTKEY_FILE} \
     ${ENV_CORE_PEER_TLS_CLIENTCERT_FILE}
-else:
+else
     upgradeChainCode ${ENV_CHANNEL_NAME} ${ENV_CHAIN_CODE_NAME} ${ENV_CHAIN_CODE_VERSION} ${ENV_CHAIN_CODE_POLICY} ${ENV_ORDERER_ADDRESS} \
     ${ENV_ORDER_CA_CHAINFILE} ${ENV_CORE_PEER_TLS_CLIENTKEY_FILE} ${ENV_CORE_PEER_TLS_CLIENTCERT_FILE}
 fi

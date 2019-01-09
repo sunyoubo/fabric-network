@@ -39,8 +39,11 @@ services:
       - kafka3
     networks:
       - $NET_GROUP
-#    extra_hosts:
-#     - "somehost:162.242.195.82"
+    extra_hosts:
+     - "peer0.org1.example.com:192.168.1.38"
+     - "peer1.org1.example.com:192.168.1.38"
+     - "peer0.org2.example.com:192.168.1.42"
+     - "peer1.org2.example.com:192.168.1.42"
 
   zookeeper0:
     extends:

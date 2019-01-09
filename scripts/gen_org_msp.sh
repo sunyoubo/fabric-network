@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
+source /scripts/utils.sh
+
 log "Execute $0 args: "
 env |grep 'ENV_'
-
-source /scripts/utils.sh
 
 # 登记CA引导用户
 function enrollCaAdmin() {

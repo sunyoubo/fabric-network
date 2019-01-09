@@ -19,4 +19,8 @@ checkDockerCompose
 # clear fabric environment
 clear_old_env
 
-docker-compose -f docker-compose-ca.yml up -d rca-mysql-${ORG} rca-${ORG}.${DOMAIN} ica-mysql-${ORG} ica-${ORG}.${DOMAIN}
+docker-compose -f docker-compose-ca.yml up -d rca-mysql-${ORG} ica-mysql-${ORG}
+
+sleep 60
+
+docker-compose -f docker-compose-ca.yml up -d rca-${ORG}.${DOMAIN} ica-${ORG}.${DOMAIN}

@@ -2,8 +2,13 @@
 
 source ./scripts/utils.sh
 
-ENV_CHANNEL_NAME=mychannel   # 应用通道名
-ENV_PEER_ORGS=org1,org2      # peer组织，多个组织使用“，”分割，不需要多余空格
+CHANNEL_NAME=$1
+PEER_ORGS=$2
+: ${CHANNEL_NAME:=mychannel}
+: ${PEER_ORGS:=org1,org2}
+
+ENV_CHANNEL_NAME=${CHANNEL_NAME}   # 应用通道名
+ENV_PEER_ORGS=${PEER_ORGS}         # peer组织，多个组织使用“，”分割，不需要多余空格
 ENV_CHANNEL_TX_FILE=${ENV_CHANNEL_NAME}.tx         #固定值
 ENV_ANCHOR_TX_FILE=${ENV_CHANNEL_NAME}-anchors.tx  #固定值
 

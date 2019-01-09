@@ -12,7 +12,6 @@ services:
     container_name: peer0.org1.example.com
     environment:
       - FABRIC_CA_CLIENT_TLS_CERTFILES=/data/org1-ca-chain.pem
-#      - ENROLLMENT_URL=https://peer0.org1.example.com:peer0.org1.example.compw@ica-org1.example.com:7054
       - PEER_NAME=peer0.org1.example.com
       - PEER_HOST=peer0.org1.example.com
       - PEER_PASS=peer0.org1.example.compw
@@ -38,6 +37,13 @@ services:
     command: /bin/bash -c '/scripts/docker_start_peer.sh 2>&1 | tee /data/logs/peer0.org1.example.com.log'
     depends_on:
       - couchdb0.org1.example.com
+    ports:
+      - "7051:7051"
+      - "7053:7053"
+    extra_hosts:
+     - "order1-ordererorg.example.com:192.168.1.131"
+     - "peer0.org2.example.com:192.168.1.42"
+     - "peer1.org2.example.com:192.168.1.42"
 
   peer1.org1.example.com:
     extends:
@@ -51,27 +57,36 @@ services:
       - PEER_HOST=peer1.org1.example.com
       - PEER_PASS=peer1.org1.example.compw
       - CORE_PEER_ID=peer1.org1.example.com
-      - CORE_PEER_ADDRESS=peer1.org1.example.com:7051
+      - CORE_PEER_ADDRESS=peer1.org1.example.com:8051
       - CORE_PEER_LOCALMSPID=org1MSP
       - CORE_PEER_TLS_ROOTCERT_FILE=/data/org1-ca-chain.pem
       - CORE_PEER_TLS_CLIENTROOTCAS_FILES=/data/org1-ca-chain.pem
       - CORE_PEER_TLS_CLIENTCERT_FILE=/data/tls/peer1.org1.example.com-client.crt
       - CORE_PEER_TLS_CLIENTKEY_FILE=/data/tls/peer1.org1.example.com-client.key
       - CORE_PEER_GOSSIP_ORGLEADER=false
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org1.example.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org1.example.com:8051
       - CORE_PEER_GOSSIP_SKIPHANDSHAKE=true
       - ORG=org1
       - ORG_ADMIN_CERT=/data/orgs/org1/msp/admincerts/cert.pem
       - CA_ADMIN_USER_PASS=ica-org1-admin:adminpw
-      - CA_HOST=ica-org1.example.com
+      - CA_ADDRESS=ica-org1.example.com:7054
       - CA_NAME=ica-org1.example.com
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb1.org1.example.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=couchdb
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=123456
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:8051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=127.0.0.1:8051
     command: /bin/bash -c '/scripts/docker_start_peer.sh 2>&1 | tee /data/logs/peer1.org1.example.com.log'
     depends_on:
       - couchdb1.org1.example.com
+    ports:
+      - "8051:8051"
+      - "8053:7053"
+    extra_hosts:
+     - "order1-ordererorg.example.com:192.168.1.131"
+     - "peer0.org2.example.com:192.168.1.42"
+     - "peer1.org2.example.com:192.168.1.42"
 
   couchdb0.org1.example.com:
     container_name: couchdb0.org1.example.com
@@ -81,6 +96,8 @@ services:
     environment:
       - COUCHDB_USER=couchdb
       - COUCHDB_PASSWORD=123456
+    ports:
+      - 5984:5984
 
   couchdb1.org1.example.com:
     container_name: couchdb1.org1.example.com
@@ -115,7 +132,7 @@ services:
       - ORG=org2
       - ORG_ADMIN_CERT=/data/orgs/org2/msp/admincerts/cert.pem
       - CA_ADMIN_USER_PASS=ica-org2-admin:adminpw
-      - CA_HOST=ica-org2.example.com
+      - CA_ADDRESS=ica-org2.example.com:7054
       - CA_NAME=ica-org2.example.com
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0.org2.example.com:5984
@@ -124,6 +141,13 @@ services:
     command: /bin/bash -c '/scripts/docker_start_peer.sh 2>&1 | tee /data/logs/peer0.org2.example.com.log'
     depends_on:
       - couchdb0.org2.example.com
+    ports:
+      - "7051:7051"
+      - "7053:7053"
+    extra_hosts:
+     - "order1-ordererorg.example.com:192.168.1.131"
+     - "peer0.org1.example.com:192.168.1.38"
+     - "peer1.org1.example.com:192.168.1.38"
 
   peer1.org2.example.com:
     extends:
@@ -137,27 +161,36 @@ services:
       - PEER_HOST=peer1.org2.example.com
       - PEER_PASS=peer1.org2.example.compw
       - CORE_PEER_ID=peer1.org2.example.com
-      - CORE_PEER_ADDRESS=peer1.org2.example.com:7051
+      - CORE_PEER_ADDRESS=peer1.org2.example.com:8051
       - CORE_PEER_LOCALMSPID=org2MSP
       - CORE_PEER_TLS_ROOTCERT_FILE=/data/org2-ca-chain.pem
       - CORE_PEER_TLS_CLIENTROOTCAS_FILES=/data/org2-ca-chain.pem
       - CORE_PEER_TLS_CLIENTCERT_FILE=/data/tls/peer1.org2.example.com-client.crt
       - CORE_PEER_TLS_CLIENTKEY_FILE=/data/tls/peer1.org2.example.com-client.key
       - CORE_PEER_GOSSIP_ORGLEADER=false
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org2.example.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.org2.example.com:8051
       - CORE_PEER_GOSSIP_SKIPHANDSHAKE=true
       - ORG=org2
       - ORG_ADMIN_CERT=/data/orgs/org2/msp/admincerts/cert.pem
       - CA_ADMIN_USER_PASS=ica-org2-admin:adminpw
-      - CA_HOST=ica-org2.example.com
+      - CA_ADDRESS=ica-org2.example.com:7054
       - CA_NAME=ica-org2.example.com
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb1.org2.example.com:5984
       - CORE_LEDGER_STATE_COUCHDBCONFIG_USERNAME=couchdb
       - CORE_LEDGER_STATE_COUCHDBCONFIG_PASSWORD=123456
+      - CORE_PEER_LISTENADDRESS=0.0.0.0:8051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=127.0.0.1:8051
     command: /bin/bash -c '/scripts/docker_start_peer.sh 2>&1 | tee /data/logs/peer1.org2.example.com.log'
     depends_on:
       - couchdb1.org2.example.com
+    ports:
+      - "8051:8051"
+      - "8053:7053"
+    extra_hosts:
+     - "order1-ordererorg.example.com:192.168.1.131"
+     - "peer0.org1.example.com:192.168.1.38"
+     - "peer1.org1.example.com:192.168.1.38"
 
   couchdb0.org2.example.com:
     container_name: couchdb0.org2.example.com
@@ -167,6 +200,8 @@ services:
     environment:
       - COUCHDB_USER=couchdb
       - COUCHDB_PASSWORD=123456
+    ports:
+      - 5984:5984
 
   couchdb1.org2.example.com:
     container_name: couchdb1.org2.example.com

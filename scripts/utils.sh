@@ -46,20 +46,24 @@ function askProceed() {
 
 function clear_old_env() {
 
-    warning "Deleting all existing docker containers ..."
-    askProceed
+    log "Check existing docker containers "
 
     # Delete docker containers
-    dockerContainers=$(docker ps -a | awk '$2{print $1}')
+    dockerContainers=$(docker ps -a | awk 'NR == 1 {next} {print $1}')
     if [[ "$dockerContainers" != "" ]]; then
+       log "Remove docker containers as follows" `docker ps -a | awk 'NR == 1 {next} {print $1}'`
+       askProceed
        docker rm -f ${dockerContainers} > /dev/null
+       log "Delete all docker containers done"
     fi
 
     # Remove chaincode docker images
-    chaincodeImages=`docker images | grep "^dev-peer" | awk '{print $3}'`
+    chaincodeImages=`docker images | grep "^dev-peer" | awk 'NR == 1 {next} {print $3}'`
     if [[ "$chaincodeImages" != "" ]]; then
-       warning "Removing chaincode docker images ..."
+       log "Remove chaincode docker images as follows" `docker images | grep "^dev-peer" | awk 'NR == 1 {next} {print $3}'`
+       askProceed
        docker rmi -f ${chaincodeImages} > /dev/null
+       log "Delete chain code docker containers done"
     fi
 }
 
@@ -118,7 +122,7 @@ function genClientTLSCert {
 function getOrgAdminMSP() {
 
     if [[ $# -ne 3 ]]; then
-       fatal "Usage: get org admin msp, need 3 args but receive args:$*"
+       fatal "Usage: $FUNCNAME, ADMIN_MSP_DIR CA_CHAINFILE ADMIN_ENROLLMENT_URL Receive args:$*"
     fi
 
     ADMIN_MSP_DIR=$1
@@ -145,6 +149,7 @@ function checkCliContainer() {
     if [[ -z ${cliId} ]] ; then
         log "Start cli container..."
         docker-compose -f ${COMPOST_FILE} up -d fabric-cli
+        sleep 10
     fi
 }
 
@@ -161,9 +166,9 @@ function verifyExecuteResult() {
 function checkOS() {
 
     if grep -Eqi "Ubuntu 16" /etc/issue ; then
-        log "Start with ubuntu 16"
+        log " Start with" `cat /etc/issue`
     elif grep -Eqi "Ubuntu 18" /etc/issue ; then
-        log "Start with ubuntu 18"
+        log " Start with" `cat /etc/issue`
     else
         fatal "Only support OS: Ubuntu 16 or Ubuntu 18"
         exit 1
@@ -176,17 +181,15 @@ function checkDocker() {
     if [[ "$?" -ne 0 ]] ; then
         log "Start install docker ..."
 
-        if grep -Eqi "Ubuntu 16" /etc/issue ; then
-            echo "deb [arch=amd64] https://mirrors.aliyun.com/docker-ce/linux/ubuntu xenial stable" >> /etc/apt/sources.list.d/docker.list
-        else
-            echo "deb [arch=amd64] https://mirrors.aliyun.com/docker-ce/linux/ubuntu bionic stable" >> /etc/apt/sources.list.d/docker.list
-        fi
-
+        apt-get update
+        apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
         apt-get update
         apt-get install docker-ce
-        docker run hello-world
-
         verifyExecuteResult $? "Failed to install docker-ce"
+
+        docker run hello-world
     else
         log "Docker has been installed "
     fi

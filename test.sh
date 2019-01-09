@@ -67,26 +67,22 @@ source ./scripts/utils.sh
 #    -c '{"Args":["re-init"]}' -P "${ENV_CHAIN_CODE_POLICY}" --tls --cafile ${ENV_ORDER_CA_CHAINFILE} --clientauth \
 #    --keyfile ${ENV_CORE_PEER_TLS_CLIENTKEY_FILE} --certfile ${ENV_CORE_PEER_TLS_CLIENTCERT_FILE}
 
-#function testFun() {
-#
-#    echo $*
-#    checkInputArgsCount $* 2 "test $FUNCNAME"
-#}
-#
-#function checkInputArgsCount() {
-#
-#    echo "All args $*"
-#
-#    echo "count" `expr $# - 1`
-#    a=`expr $# - 1`
-#    args=$@
-#    echo "message" $(`$a`) "-"$a-$5
-#
-#    if [[ $# -ne 2 ]]; then
-#        "$$# need `$#-2` args"
-#    fi
-#
-#}
-#
-#testFun 1 2 3 4
 
+peer chaincode invoke -C mychannel -n mycc2 -c '{"Args":["initMarble","marble1","blue","70","tom"]}' --tls --cafile /data/ordererorg-ca-chain.pem  --clientauth \
+    --keyfile ${CORE_PEER_TLS_CLIENTKEY_FILE} --certfile ${CORE_PEER_TLS_CLIENTCERT_FILE}
+
+peer chaincode query -C mychannel -n mycc2 -c '{"Args":["readMarble","marble1"]}' --tls --cafile /data/ordererorg-ca-chain.pem  --clientauth \
+    --keyfile ${CORE_PEER_TLS_CLIENTKEY_FILE} --certfile ${CORE_PEER_TLS_CLIENTCERT_FILE}
+
+
+sudo scp -r data/orgs/org1 blockchain@192.168.1.131:/home/blockchain/fabric/fabric-mainnet/data/orgs
+
+sudo scp -r data/orgs/org2 blockchain@192.168.1.131:/home/blockchain/fabric/fabric-mainnet/data/orgs
+
+
+sudo scp mychannel.tx ordererorg-ca-chain.pem org1-mychannel-anchors.tx blockchain@192.168.1.38:/home/blockchain/fabric/fabric-mainnet/data/
+
+sudo scp ordererorg-ca-chain.pem org2-mychannel-anchors.tx blockchain@192.168.1.42:/home/blockchain/fabric/fabric-mainnet/data/
+
+
+docker-compose -f docker-compose-peer.yml up -d peer0.org1.example.com
