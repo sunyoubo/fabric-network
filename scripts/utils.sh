@@ -151,6 +151,9 @@ function checkCliContainer() {
         docker-compose -f ${COMPOST_FILE} up -d fabric-cli
         sleep 10
     fi
+
+    # install other go packet for chain code
+    docker exec fabric-cli go get github.com/pkg/errors
 }
 
 function verifyExecuteResult() {

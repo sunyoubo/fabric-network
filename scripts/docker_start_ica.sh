@@ -2,9 +2,6 @@
 
 sleep 30
 
-#fabric-ca-client getcacert -u ${PARENT_URL} -M ${FABRIC_CA_CLIENT_HOME}/msp
-#FABRIC_CA_SERVER_INTERMEDIATE_TLS_CERTFILES=""
-
 # Initialize the intermediate CA
 fabric-ca-server init -b ${BOOTSTRAP_USER_PASS} -u ${PARENT_URL} --db.type mysql --db.datasource "${MYSQL_USER_PASS}@tcp(${MYSQL_HOST}:3306)/fabric_ca?parseTime=true"
 

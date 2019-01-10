@@ -85,14 +85,23 @@ sudo ./do_new_channel.sh org2 update
 
 各组织管理员操作(注意各组织修改对应参数)
 ``` 
-sudo ./deploy_cc.sh org1
+sudo ./deploy_cc.sh org1 install mycc 1.0
 ```
 或
 ``` 
-sudo ./deploy_cc.sh org2
+sudo ./deploy_cc.sh org2 install mycc 1.0
 ```
+
+升级则采用：
+``` 
+sudo ./deploy_cc.sh org1 upgrade mycc 1.1
+``` 
+或
+``` 
+sudo ./deploy_cc.sh org2 upgrade mycc 1.1
+``` 
 
 **todo** 
  - 映射生产数据到宿主机器（MySQL、账本、各节点证书等）
- 
+ - 区块浏览器部署
 
