@@ -11,6 +11,8 @@ services:
       service: peer-base
     container_name: peer0.org1.example.com
     environment:
+      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=false
+      - CORE_LOGGING_GRPC=DEBUG
       - FABRIC_CA_CLIENT_TLS_CERTFILES=/data/org1-ca-chain.pem
       - PEER_NAME=peer0.org1.example.com
       - PEER_HOST=peer0.org1.example.com
@@ -44,6 +46,8 @@ services:
      - "order1-ordererorg.example.com:192.168.1.131"
      - "peer0.org2.example.com:192.168.1.42"
      - "peer1.org2.example.com:192.168.1.42"
+    volumes:
+      - ./data/docker/peer0.org1.example.com/var/hyperledger/production:/var/hyperledger/production
 
   peer1.org1.example.com:
     extends:
@@ -51,6 +55,8 @@ services:
       service: peer-base
     container_name: peer1.org1.example.com
     environment:
+      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=false
+      - CORE_LOGGING_GRPC=DEBUG
       - FABRIC_CA_CLIENT_TLS_CERTFILES=/data/org1-ca-chain.pem
       - ENROLLMENT_URL=https://peer1.org1.example.com:peer1.org1.example.compw@ica-org1.example.com:7054
       - PEER_NAME=peer1.org1.example.com
@@ -87,6 +93,8 @@ services:
      - "order1-ordererorg.example.com:192.168.1.131"
      - "peer0.org2.example.com:192.168.1.42"
      - "peer1.org2.example.com:192.168.1.42"
+    volumes:
+      - ./data/docker/peer1.org1.example.com/var/hyperledger/production:/var/hyperledger/production
 
   couchdb0.org1.example.com:
     container_name: couchdb0.org1.example.com
@@ -98,6 +106,8 @@ services:
       - COUCHDB_PASSWORD=123456
     ports:
       - 5984:5984
+    volumes:
+      - ./data/docker/couchdb0.org1.example.com/opt/couchdb/data:/opt/couchdb/data
 
   couchdb1.org1.example.com:
     container_name: couchdb1.org1.example.com
@@ -107,6 +117,8 @@ services:
     environment:
       - COUCHDB_USER=couchdb
       - COUCHDB_PASSWORD=123456
+    volumes:
+      - ./data/docker/couchdb1.org1.example.com/opt/couchdb/data:/opt/couchdb/data
 
   peer0.org2.example.com:
     extends:
@@ -114,6 +126,7 @@ services:
       service: peer-base
     container_name: peer0.org2.example.com
     environment:
+      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=false
       - FABRIC_CA_CLIENT_TLS_CERTFILES=/data/org2-ca-chain.pem
       - ENROLLMENT_URL=https://peer0.org2.example.com:peer0.org2.example.compw@ica-org2.example.com:7054
       - PEER_NAME=peer0.org2.example.com
@@ -148,6 +161,8 @@ services:
      - "order1-ordererorg.example.com:192.168.1.131"
      - "peer0.org1.example.com:192.168.1.38"
      - "peer1.org1.example.com:192.168.1.38"
+    volumes:
+      - ./data/docker/peer0.org2.example.com/var/hyperledger/production:/var/hyperledger/production
 
   peer1.org2.example.com:
     extends:
@@ -155,6 +170,7 @@ services:
       service: peer-base
     container_name: peer1.org2.example.com
     environment:
+      - CORE_PEER_TLS_CLIENTAUTHREQUIRED=false
       - FABRIC_CA_CLIENT_TLS_CERTFILES=/data/org2-ca-chain.pem
       - ENROLLMENT_URL=https://peer1.org2.example.com:peer1.org2.example.compw@ica-org2.example.com:7054
       - PEER_NAME=peer1.org2.example.com
@@ -191,6 +207,8 @@ services:
      - "order1-ordererorg.example.com:192.168.1.131"
      - "peer0.org1.example.com:192.168.1.38"
      - "peer1.org1.example.com:192.168.1.38"
+    volumes:
+      - ./data/docker/peer1.org2.example.com/var/hyperledger/production:/var/hyperledger/production
 
   couchdb0.org2.example.com:
     container_name: couchdb0.org2.example.com
@@ -202,6 +220,8 @@ services:
       - COUCHDB_PASSWORD=123456
     ports:
       - 5984:5984
+    volumes:
+      - ./data/docker/couchdb0.org2.example.com/opt/couchdb/data:/opt/couchdb/data
 
   couchdb1.org2.example.com:
     container_name: couchdb1.org2.example.com
@@ -211,3 +231,5 @@ services:
     environment:
       - COUCHDB_USER=couchdb
       - COUCHDB_PASSWORD=123456
+    volumes:
+      - ./data/docker/couchdb1.org2.example.com/opt/couchdb/data:/opt/couchdb/data

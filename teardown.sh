@@ -8,4 +8,4 @@ clear_old_env
 warning "remove dir: ./data/logs/*  ./data/orgs/* ./data/tls/* ./data/*.block ./data/*.tx ./data/*.pem "
 askProceed
 
-rm -rf ./data/logs/*  ./data/orgs/* ./data/tls/* ./data/*.block ./data/*.tx ./data/*.pem
+rm -rf ./data/logs/*  ./data/orgs/* ./data/tls/* ./data/*.block ./data/*.tx ./data/*.pem ./data/docker

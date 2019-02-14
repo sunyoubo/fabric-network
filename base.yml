@@ -8,6 +8,10 @@ services:
     command: --sql-mode ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
     networks:
       - $NET_GROUP
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5g"
 
   ca-base:
     image: hyperledger/fabric-ca:$FABRIC_TAG
@@ -17,6 +21,10 @@ services:
       - FABRIC_CA_SERVER_TLS_ENABLED=true
     networks:
       - $NET_GROUP
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5g"
 
   orderer-base:
     build:
@@ -33,6 +41,10 @@ services:
       - ORDERER_GENERAL_TLS_PRIVATEKEY=/etc/hyperledger/orderer/tls/server.key
       - ORDERER_GENERAL_TLS_CERTIFICATE=/etc/hyperledger/orderer/tls/server.crt
       - ORDERER_GENERAL_TLS_CLIENTAUTHREQUIRED=true
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5g"
 
   peer-base: # abstract base for fabric-peer, will be used in peer.yaml
     build:
@@ -63,6 +75,10 @@ services:
       - /var/run:/host/var/run
     networks:
       - $NET_GROUP
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5g"
 
   zookeeper-base:
     image: hyperledger/fabric-zookeeper:$KAFKA_TAG
@@ -74,6 +90,10 @@ services:
       - '3888'
     networks:
       - $NET_GROUP
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5g"
 
   kafka-base:
     image: hyperledger/fabric-kafka:$KAFKA_TAG
@@ -88,6 +108,10 @@ services:
       - '9092'
     networks:
       - $NET_GROUP
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5g"
 
   couchdb-base:
     image: hyperledger/fabric-couchdb:$COUCHDB_TAG
@@ -95,6 +119,10 @@ services:
     tty: true
     networks:
       - $NET_GROUP
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5g"
 
   cli-base:
     tty: true
@@ -107,3 +135,7 @@ services:
       - FABRIC_LOGGING_SPEC=DEBUG
     networks:
       - $NET_GROUP
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5g"

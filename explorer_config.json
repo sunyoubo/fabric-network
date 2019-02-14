@@ -5,8 +5,8 @@
       "clients": {
         "client-1": {
           "tlsEnable": true,
-          "organization": "Org1MSP",
-          "channel": "mychannel",
+          "organization": "org1MSP",
+          "channel": "supplychainchannel",
           "credentialStore": {
             "path": "./tmp/credentialStore_Org1/credential",
             "cryptoStore": {
@@ -16,7 +16,7 @@
         }
       },
       "channels": {
-        "mychannel": {
+        "supplychainchannel": {
           "peers": {
             "peer0.org1.example.com": {}
           },
@@ -32,8 +32,8 @@
         }
       },
       "organizations": {
-        "Org1MSP": {
-          "mspid": "Org1MSP",
+        "org1MSP": {
+          "mspid": "org1MSP",
           "fullpath": false,
           "adminPrivateKey": {
             "path": "/tmp/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore"
@@ -42,16 +42,17 @@
             "path": "/tmp/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts"
           }
         },
-        "Org2MSP": {
-          "mspid": "Org2MSP",
+        "org2MSP": {
+          "mspid": "org2MSP",
           "adminPrivateKey": {
             "path": "/tmp/crypto/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/keystore"
           }
         },
-        "OrdererMSP": {
-          "mspid": "OrdererMSP",
+        "ordererorgMSP": {
+          "mspid": "ordererorgMSP",
           "adminPrivateKey": {
-            "path": "/tmp/crypto/ordererOrganizations/example.com/users/Admin@example.com/msp/keystore"
+            "path":
+            "/tmp/crypto/ordererOrganizations/example.com/users/Admin@example.com/msp/keystore"
           }
         }
       },
@@ -67,13 +68,37 @@
           }
         },
         "peer1.org1.example.com": {
-          "url": "grpcs://peer1.org1.example.com:8051"
+          "tlsCACerts": {
+            "path":
+            "/tmp/crypto/peerOrganizations/org1.example.com/peers/peer1.org1.example.com/tls/ca.crt"
+          },
+          "url": "grpcs://peer1.org1.example.com:8051",
+          "eventUrl": "grpcs://peer1.org1.example.com:8053",
+          "grpcOptions": {
+            "ssl-target-name-override": "peer1.org1.example.com"
+          }
         },
         "peer0.org2.example.com": {
-          "url": "grpcs://peer0.org2.example.com:7051"
+          "tlsCACerts": {
+            "path":
+            "/tmp/crypto/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt"
+          },
+          "url": "grpcs://peer0.org2.example.com:7051",
+          "eventUrl": "grpcs://peer0.org2.example.com:8053",
+          "grpcOptions": {
+            "ssl-target-name-override": "peer0.org2.example.com"
+          }
         },
         "peer1.org2.example.com": {
-          "url": "grpcs://peer1.org2.example.com:8051"
+          "tlsCACerts": {
+            "path":
+            "/tmp/crypto/peerOrganizations/org2.example.com/peers/peer1.org2.example.com/tls/ca.crt"
+          },
+          "url": "grpcs://peer1.org2.example.com:7051",
+          "eventUrl": "grpcs://peer1.org2.example.com:8053",
+          "grpcOptions": {
+            "ssl-target-name-override": "peer1.org2.example.com"
+          }
         }
       },
       "orderers": {
@@ -81,8 +106,7 @@
           "url": "grpcs://orderer.example.com:7050"
         }
       }
-    },
-    "network-2": {}
+    }
   },
   "configtxgenToolPath": "",
   "license": "Apache-2.0"

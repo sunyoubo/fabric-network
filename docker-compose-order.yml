@@ -11,6 +11,7 @@ services:
       service: orderer-base
     container_name: order1-ordererorg.example.com
     environment:
+      - ORDERER_GENERAL_TLS_CLIENTAUTHREQUIRED=false
       - FABRIC_CA_CLIENT_TLS_CERTFILES=/data/ordererorg-ca-chain.pem
       - ORDERER_HOST=order1-ordererorg.example.com
       - ORDERER_GENERAL_GENESISFILE=/data/orderer.genesis.block
@@ -30,6 +31,7 @@ services:
     volumes:
       - ./scripts:/scripts
       - ./data:/data
+      - ./data/docker/order1-ordererorg.example.com/var/hyperledger/production:/var/hyperledger/production
     ports:
       - 7050:7050
     depends_on:
@@ -91,6 +93,8 @@ services:
       - zookeeper0
       - zookeeper1
       - zookeeper2
+    volumes:
+      - ./data/docker/kafka0/tmp/kafka-logs:/tmp/kafka-logs
 
   kafka1:
     extends:
@@ -107,6 +111,8 @@ services:
       - zookeeper0
       - zookeeper1
       - zookeeper2
+    volumes:
+      - ./data/docker/kafka1/tmp/kafka-logs:/tmp/kafka-logs
 
   kafka2:
     extends:
@@ -123,6 +129,8 @@ services:
       - zookeeper0
       - zookeeper1
       - zookeeper2
+    volumes:
+      - ./data/docker/kafka2/tmp/kafka-logs:/tmp/kafka-logs
 
   kafka3:
     extends:
@@ -139,3 +147,5 @@ services:
       - zookeeper0
       - zookeeper1
       - zookeeper2
+    volumes:
+      - ./data/docker/kafka3/tmp/kafka-logs:/tmp/kafka-logs

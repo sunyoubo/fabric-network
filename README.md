@@ -26,6 +26,11 @@ sudo ./start_ca.sh org1 example.com
 ```
 sudo ./start_ca.sh org2 example.com
 ```
+可以通过查看日志，检查ca是否已经启动完毕，确认启动完成后再执行其他操作。查看中间CA日志 如：
+```
+sudo cat data/logs/ica-ordererorg.example.com.log
+```
+日志文件最后出现Listening on https://0.0.0.0:7054，代表启动成功。
 
 根据组织配置，生成组织MSP（注意根据组织修改脚本变量配置）:
 ```
@@ -65,7 +70,7 @@ orderer 共享channel.tx文件到channel业务发起peer组织，并由该peer�
 - orderer节点创建通道材料（注意修改脚本变量配置）
 
 ```
-sudo ./prepare_channel.sh mychannel org1,org2
+sudo ./prepare_channel.sh supplychainchannel org1,org2
 ```
 
 - 业务发起组织(peer节点)创建应用通道或其他组织更新锚节点配置（注意修改脚本变量配置）
@@ -85,23 +90,24 @@ sudo ./do_new_channel.sh org2 update
 
 各组织管理员操作(注意各组织修改对应参数)
 ``` 
-sudo ./deploy_cc.sh org1 install mycc 1.0
+sudo ./deploy_cc.sh org1 install sbccc 1.0
 ```
 或
 ``` 
-sudo ./deploy_cc.sh org2 install mycc 1.0
+sudo ./deploy_cc.sh org2 install sbccc 1.0
 ```
 
 升级则采用：
 ``` 
-sudo ./deploy_cc.sh org1 upgrade mycc 1.1
+sudo ./deploy_cc.sh org1 upgrade sbccc 1.1
 ``` 
 或
 ``` 
-sudo ./deploy_cc.sh org2 upgrade mycc 1.1
+sudo ./deploy_cc.sh org2 upgrade sbccc 1.1
 ``` 
 
 **todo** 
  - 映射生产数据到宿主机器（MySQL、账本、各节点证书等）
  - 区块浏览器部署
+ - 各节点重启恢复
 

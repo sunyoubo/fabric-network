@@ -17,6 +17,8 @@ services:
       MYSQL_PASSWORD: 123456
     ports:
       - "3306:3306"
+    volumes:
+      - ./data/docker/rca-mysql-ordererorg/var/lib/mysql:/var/lib/mysql
 
   rca-ordererorg.example.com:
     extends:
@@ -52,6 +54,8 @@ services:
       MYSQL_PASSWORD: 123456
     ports:
       - "3307:3306"
+    volumes:
+      - ./data/docker/ica-mysql-ordererorg/var/lib/mysql:/var/lib/mysql
 
   ica-ordererorg.example.com:
     extends:
@@ -90,8 +94,10 @@ services:
       MYSQL_DATABASE: fabric_ca
       MYSQL_USER: fabric
       MYSQL_PASSWORD: 123456
-#    ports:
-#      - "3306:3306"
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./data/docker/rca-mysql-org1/var/lib/mysql:/var/lib/mysql
 
   rca-org1.example.com:
     extends:
@@ -125,8 +131,10 @@ services:
       MYSQL_DATABASE: fabric_ca
       MYSQL_USER: fabric
       MYSQL_PASSWORD: 123456
-#    ports:
-#      - "3307:3306"
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./data/docker/ica-mysql-org1/var/lib/mysql:/var/lib/mysql
 
   ica-org1.example.com:
     extends:
@@ -165,8 +173,10 @@ services:
       MYSQL_DATABASE: fabric_ca
       MYSQL_USER: fabric
       MYSQL_PASSWORD: 123456
-#    ports:
-#      - "3306:3306"
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./data/docker/rca-mysql-org2/var/lib/mysql:/var/lib/mysql
 
   rca-org2.example.com:
     extends:
@@ -200,8 +210,10 @@ services:
       MYSQL_DATABASE: fabric_ca
       MYSQL_USER: fabric
       MYSQL_PASSWORD: 123456
-#    ports:
-#      - "3307:3306"
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./data/docker/ica-mysql-org2/var/lib/mysql:/var/lib/mysql
 
   ica-org2.example.com:
     extends:
@@ -238,7 +250,7 @@ services:
     volumes:
       - ./scripts:/scripts
       - ./data:/data
-      - ~/fabric-samples:/opt/gopath/src/github.com/hyperledger/fabric-samples
+      - ./chaincode:/opt/gopath/src/git.coding.net/digcreditdev
     extra_hosts:
      - "order1-ordererorg.example.com:192.168.1.131"
      - "peer0.org1.example.com:192.168.1.38"

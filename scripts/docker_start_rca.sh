@@ -2,10 +2,14 @@
 
 sleep 20
 
-fabric-ca-server init -b ${BOOTSTRAP_USER_PASS} --db.type mysql --db.datasource "${MYSQL_USER_PASS}@tcp(${MYSQL_HOST}:3306)/fabric_ca?parseTime=true"
+if [[ ! -f "$FABRIC_CA_SERVER_HOME/fabric-ca-server-config.yaml" ]];then
+    fabric-ca-server init -b ${BOOTSTRAP_USER_PASS} --db.type mysql --db.datasource "${MYSQL_USER_PASS}@tcp(${MYSQL_HOST}:3306)/fabric_ca?parseTime=true"
+    cp ${FABRIC_CA_SERVER_HOME}/ca-cert.pem ${TARGET_CERTFILE}
+fi
+
 #产生如下文件：
-#root@49765fb0f69e:/etc/hyperledger# tree -L 4 fabric-ca
-#fabric-ca
+#root@49765fb0f69e:/etc/hyperledger# tree -L 4 fabric-ca-server
+#fabric-ca-server
 #|-- IssuerPublicKey
 #|-- IssuerRevocationPublicKey
 #|-- ca-cert.pem
@@ -18,13 +22,12 @@ fabric-ca-server init -b ${BOOTSTRAP_USER_PASS} --db.type mysql --db.datasource 
 
 
 # Copy the root CA's signing certificate to the data directory to be used by others
-cp ${FABRIC_CA_SERVER_HOME}/ca-cert.pem ${TARGET_CERTFILE}
 
 # Start the root CA
 fabric-ca-server start --db.type mysql --db.datasource "${MYSQL_USER_PASS}@tcp(${MYSQL_HOST}:3306)/fabric_ca?parseTime=true"
 
-# /etc/hyperledger/fabric-ca 目录变化如下
-#fabric-ca
+# /etc/hyperledger/fabric-ca-server 目录变化如下
+#fabric-ca-server
 #|-- IssuerPublicKey
 #|-- IssuerRevocationPublicKey
 #|-- ca-cert.pem

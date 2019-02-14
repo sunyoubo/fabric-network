@@ -49,18 +49,18 @@ function clear_old_env() {
     log "Check existing docker containers "
 
     # Delete docker containers
-    dockerContainers=$(docker ps -a | awk 'NR == 1 {next} {print $1}')
+    dockerContainers=$(docker ps -a |grep -E "fabric|peer|order" |awk 'NR == 1 {next} {print $1}')
     if [[ "$dockerContainers" != "" ]]; then
-       log "Remove docker containers as follows" `docker ps -a | awk 'NR == 1 {next} {print $1}'`
+       log "Remove docker containers as follows" `docker ps -a |grep -E "fabric|peer|order" | awk 'NR == 1 {next} {print $1}'`
        askProceed
        docker rm -f ${dockerContainers} > /dev/null
        log "Delete all docker containers done"
     fi
 
     # Remove chaincode docker images
-    chaincodeImages=`docker images | grep "^dev-peer" | awk 'NR == 1 {next} {print $3}'`
+    chaincodeImages=`docker images | grep -E "^dev-peer" | awk 'NR == 1 {next} {print $3}'`
     if [[ "$chaincodeImages" != "" ]]; then
-       log "Remove chaincode docker images as follows" `docker images | grep "^dev-peer" | awk 'NR == 1 {next} {print $3}'`
+       log "Remove chaincode docker images as follows" `docker images | grep -E "^dev-peer" | awk 'NR == 1 {next} {print $3}'`
        askProceed
        docker rmi -f ${chaincodeImages} > /dev/null
        log "Delete chain code docker containers done"
@@ -152,7 +152,6 @@ function checkCliContainer() {
         sleep 10
     fi
 
-    # install other go packet for chain code
     docker exec fabric-cli go get github.com/pkg/errors
 }
 
