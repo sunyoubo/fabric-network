@@ -70,7 +70,7 @@ orderer 共享channel.tx文件到channel业务发起peer组织，并由该peer�
 - orderer节点创建通道材料（注意修改脚本变量配置）
 
 ```
-sudo ./prepare_channel.sh supplychainchannel org1,org2
+sudo ./prepare_channel.sh mychannel org1,org2
 ```
 
 - 业务发起组织(peer节点)创建应用通道或其他组织更新锚节点配置（注意修改脚本变量配置）
@@ -90,20 +90,20 @@ sudo ./do_new_channel.sh org2 update
 
 各组织管理员操作(注意各组织修改对应参数)
 ``` 
-sudo ./deploy_cc.sh org1 install sbccc 1.0
+sudo ./deploy_cc.sh org1 install mycc 1.0
 ```
 或
 ``` 
-sudo ./deploy_cc.sh org2 install sbccc 1.0
+sudo ./deploy_cc.sh org2 install mycc 1.0
 ```
 
 升级则采用：
 ``` 
-sudo ./deploy_cc.sh org1 upgrade sbccc 1.1
+sudo ./deploy_cc.sh org1 upgrade mycc 1.1
 ``` 
 或
 ``` 
-sudo ./deploy_cc.sh org2 upgrade sbccc 1.1
+sudo ./deploy_cc.sh org2 upgrade mycc 1.1
 ``` 
 
 **todo** 
