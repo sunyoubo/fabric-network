@@ -4,8 +4,8 @@ source ./scripts/utils.sh
 
 # Test gen_channel_tx.sh
 # configtxgen -profile OrgsChannel -outputCreateChannelTx /data/${ENV_CHANNEL_TX_FILE} -channelID ${ENV_CHANNEL_NAME}
-# configtxgen -profile OrgsChannel -outputAnchorPeersUpdate /data/org1-supplychainchannel-anchors.tx -channelID supplychainchannel -asOrg org1
-# configtxgen -profile OrgsChannel -outputAnchorPeersUpdate /data/org2-supplychainchannel-anchors.tx -channelID supplychainchannel -asOrg org2
+# configtxgen -profile OrgsChannel -outputAnchorPeersUpdate /data/org1-mychannel-anchors.tx -channelID mychannel -asOrg org1
+# configtxgen -profile OrgsChannel -outputAnchorPeersUpdate /data/org2-mychannel-anchors.tx -channelID mychannel -asOrg org2
 
 
 # Test create_update_channel.sh
@@ -68,10 +68,10 @@ source ./scripts/utils.sh
 #    --keyfile ${ENV_CORE_PEER_TLS_CLIENTKEY_FILE} --certfile ${ENV_CORE_PEER_TLS_CLIENTCERT_FILE}
 
 
-peer chaincode invoke -C supplychainchannel -n mycc2 -c '{"Args":["initMarble","marble1","blue","70","tom"]}' --tls --cafile /data/ordererorg-ca-chain.pem  --clientauth \
+peer chaincode invoke -C mychannel -n mycc2 -c '{"Args":["initMarble","marble1","blue","70","tom"]}' --tls --cafile /data/ordererorg-ca-chain.pem  --clientauth \
     --keyfile ${CORE_PEER_TLS_CLIENTKEY_FILE} --certfile ${CORE_PEER_TLS_CLIENTCERT_FILE}
 
-peer chaincode query -C supplychainchannel -n mycc2 -c '{"Args":["readMarble","marble1"]}' --tls --cafile /data/ordererorg-ca-chain.pem  --clientauth \
+peer chaincode query -C mychannel -n mycc2 -c '{"Args":["readMarble","marble1"]}' --tls --cafile /data/ordererorg-ca-chain.pem  --clientauth \
     --keyfile ${CORE_PEER_TLS_CLIENTKEY_FILE} --certfile ${CORE_PEER_TLS_CLIENTCERT_FILE}
 
 
@@ -80,9 +80,9 @@ sudo scp -r data/orgs/org1 blockchain@192.168.1.131:/home/blockchain/fabric/fabr
 sudo scp -r data/orgs/org2 blockchain@192.168.1.131:/home/blockchain/fabric/fabric-mainnet/data/orgs
 
 
-sudo scp supplychainchannel.tx ordererorg-ca-chain.pem  org1-supplychainchannel-anchors.tx blockchain@192.168.1.38:/home/blockchain/fabric/fabric-mainnet/data/
+sudo scp mychannel.tx ordererorg-ca-chain.pem  org1-mychannel-anchors.tx blockchain@192.168.1.38:/home/blockchain/fabric/fabric-mainnet/data/
 
-sudo scp ordererorg-ca-chain.pem org2-supplychainchannel-anchors.tx blockchain@192.168.1.42:/home/blockchain/fabric/fabric-mainnet/data/
+sudo scp ordererorg-ca-chain.pem org2-mychannel-anchors.tx blockchain@192.168.1.42:/home/blockchain/fabric/fabric-mainnet/data/
 
 
 docker-compose -f docker-compose-peer.yml up -d peer0.org1.example.com
@@ -92,7 +92,7 @@ sudo docker rm fabric-cli
 
 sudo docker-compose -f docker-compose-ca.yml up -d fabric-cli
 
-peer chaincode invoke -C supplychainchannel -n sbccc -c '{"Args":["createAccount","testaccount","summary"]}' --tls --cafile /data/ordererorg-ca-chain.pem  --clientauth \
+peer chaincode invoke -C mychannel -n sbccc -c '{"Args":["createAccount","testaccount","summary"]}' --tls --cafile /data/ordererorg-ca-chain.pem  --clientauth \
     --keyfile ${CORE_PEER_TLS_CLIENTKEY_FILE} --certfile ${CORE_PEER_TLS_CLIENTCERT_FILE}
 
 

@@ -250,7 +250,7 @@ services:
     volumes:
       - ./scripts:/scripts
       - ./data:/data
-      - ./chaincode:/opt/gopath/src/git.coding.net/digcreditdev
+      - ~/fabric-samples:/opt/gopath/src/github.com/hyperledger/fabric-samples
     extra_hosts:
      - "order1-ordererorg.example.com:192.168.1.131"
      - "peer0.org1.example.com:192.168.1.38"

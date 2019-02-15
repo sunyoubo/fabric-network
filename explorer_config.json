@@ -6,7 +6,7 @@
         "client-1": {
           "tlsEnable": true,
           "organization": "org1MSP",
-          "channel": "supplychainchannel",
+          "channel": "mychannel",
           "credentialStore": {
             "path": "./tmp/credentialStore_Org1/credential",
             "cryptoStore": {
@@ -16,7 +16,7 @@
         }
       },
       "channels": {
-        "supplychainchannel": {
+        "mychannel": {
           "peers": {
             "peer0.org1.example.com": {}
           },

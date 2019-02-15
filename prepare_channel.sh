@@ -4,7 +4,7 @@ source ./scripts/utils.sh
 
 CHANNEL_NAME=$1
 PEER_ORGS=$2
-: ${CHANNEL_NAME:=supplychainchannel}
+: ${CHANNEL_NAME:=mychannel}
 : ${PEER_ORGS:=org1,org2}
 
 ENV_CHANNEL_NAME=${CHANNEL_NAME}   # 应用通道名
